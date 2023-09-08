@@ -1,0 +1,143 @@
+import { Socket } from "dgram";
+import { Router } from "express";
+export const router=Router()
+import fs from "fs"
+import {Server} from 'socket.io'
+let ruta='./src/data/carts.json' 
+
+
+
+
+let rutaProductos='./src/data/products.json' 
+
+
+function getCarts(){
+    if(fs.existsSync(ruta)){
+        return JSON.parse(fs.readFileSync(ruta,'utf-8'))
+    }else{return []}
+}
+
+export function getCartById(cid){
+    //metodo que retorna el carrito seleccionado  usando su ID
+    let isPresent=false;
+    let location=-1;
+    let i=-1;
+    let carts = getCarts()
+    console.log(carts)
+    if (carts.length==undefined){
+        if (carts.id==cid){return carts}
+        return ("Not Found")
+    }
+    carts.forEach(element => { 
+        i++;
+        if (element.id == cid) 
+        {
+            isPresent=true;
+            location=i;
+        }
+    });
+    if (isPresent) {return carts[location]}
+    return ("Not Found")
+}
+
+function getProductById(id){
+
+    //metodo que retorna el producto seleccionado  usando su ID
+    let isPresent=false;
+    let location=-1;
+    let i=-1;
+       
+    let products = JSON.parse(fs.readFileSync(rutaProductos,'utf-8'))
+    products.forEach(element => { 
+        i++;
+        if (element.id == id) 
+        {
+            isPresent=true;
+            location=i;
+        }
+        
+    });
+    if (isPresent) {return products[location]}
+    return ("Not Found")
+}
+
+function addProdToCart(cid,pid){
+    let cart=getCartById(cid)    
+    let prod=getProductById(pid)
+    let isPresent=false;
+    let location=-1;
+    let i=-1;
+    if (prod=="Not Found"){return "10"}
+    if (cart=="Not Found"){return "01"}
+    cart.products.forEach(element => { 
+        i++;
+        if (element.id == pid) 
+        {
+            isPresent=true;
+            location=i;
+        }  
+    });
+    if (isPresent){
+            cart.products[location].quantity=cart.products[location].quantity+1}
+    else{
+        let newProd={
+            quantity:1,
+            id:pid
+        }
+        cart.products.push(newProd);
+    }
+    fs.writeFileSync(ruta, JSON.stringify(cart), function (err) {if (err) throw err;});
+    return (0)
+}
+
+
+router.post('/:pid',(req,res)=>{
+    
+    //debe crear un carrito nuevo
+    let pid=parseInt(req.params.pid)
+    let newCart={
+        products:[],
+        id:0
+    }
+    let carts = getCarts()
+    newCart.id=socket.id,
+    console.log(carts.id)
+    if (carts.length===0){
+        newCart.id=1
+    }else{
+        newCart.id = carts[carts.length -1].id + 1
+    }
+    let newP={id: pid, quantity:1}
+    newCart.products.push(newP)
+    carts.push(newCart);
+    fs.writeFileSync(ruta, JSON.stringify(carts), function (err) {if (err) throw err;});
+    res.setHeader('Content-Type','application/json');
+    res.status(200).json({newCart});
+});
+
+router.get('/:cid',(req,res)=>{
+    let id=parseInt(req.params.cid)
+    if(isNaN(id)){
+        return res.status(400).json({error:'El id debe ser numerico'})
+    }
+    let cart=getCartById(id)
+    res.setHeader('Content-Type','text/html');        
+    res.status(200).render('realtimeproducts',{cart});
+});
+
+
+router.post('/:cid/product/:pid',(req,res)=>{
+    let cartId=parseInt(req.params.cid)
+    let prodId=parseInt(req.params.pid)
+    let result=addProdToCart(cartId,prodId)
+
+    if (result=="01"){return res.status(400).json({error:'Cart not found'})}
+    if (result=="10"){return res.status(400).json({error:'Prod not found'})}
+    if (result=="0"){
+        let carrito = getCartById(cartId)
+        return res.status(200).render('realtimeproducts',{carrito});}
+});
+
+
+
+
