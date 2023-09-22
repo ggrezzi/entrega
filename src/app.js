@@ -7,6 +7,7 @@ import {Server} from 'socket.io'
 import path from 'path';
 import { getCartById } from './routes/cart.router.js';
 import mongoose from 'mongoose';
+import {messagesModelo} from './dao/models/messages.modelo.js'
 
 const PORT=8080;
 
@@ -67,7 +68,7 @@ io.on('connection',socket=>{
 
     socket.on('nuevoMensaje',mensaje=>{
         mensajes.push(mensaje)
-
+        messagesModelo.create({user:mensaje.emisor,message:mensaje.mensaje})
         io.emit('llegoMensaje', mensaje)
 
     })
