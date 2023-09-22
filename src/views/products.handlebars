@@ -1,13 +1,12 @@
 <h4>Products Page:</h4>
-<a href="/products">Products refresh</a>
+<a href="/api/products">Products refresh</a>
 <hr>
 
 
 {{#each products}}
     <div class="card" style="width: 18rem;">
-        
         <div class="card-body">
-            <h5 class="card-title">{{this.title}}</h5>
+            <h5 class="card-title">{{title.title}}</h5>
             <p class="card-text">{{this.description}}</p>
             <p class="card-text">Codigo:{{this.code}}</p>
             <p class="card-text">Precio:{{this.price}}</p>
@@ -16,6 +15,3 @@
     </div>
     <br>
 {{/each}}
-
-<script src="socket.io/socket.io.js"></script>
-<script src="assets/js/cart.js"></script>

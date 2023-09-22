@@ -3,6 +3,8 @@ import { Router } from "express";
 export const router=Router()
 import fs from "fs"
 import {Server} from 'socket.io'
+import { productsModelo } from "../dao/models/products.modelo.js";
+import { cartsModelo } from "../dao/models/carts.modelo.js";
 let ruta='./src/data/carts.json' 
 
 
@@ -91,51 +93,43 @@ function addProdToCart(cid,pid){
 }
 
 
-router.post('/:pid',(req,res)=>{
+router.post('/:pid',async (req,res)=>{
     
     //debe crear un carrito nuevo
-    let pid=parseInt(req.params.pid)
+
+    let pid=req.params.pid
     let newCart={
         products:[],
-        id:0
     }
-    let carts = getCarts()
-    newCart.id=socket.id,
-    console.log(carts.id)
-    if (carts.length===0){
-        newCart.id=1
-    }else{
-        newCart.id = carts[carts.length -1].id + 1
-    }
-    let newP={id: pid, quantity:1}
-    newCart.products.push(newP)
-    carts.push(newCart);
-    fs.writeFileSync(ruta, JSON.stringify(carts), function (err) {if (err) throw err;});
-    res.setHeader('Content-Type','application/json');
-    res.status(200).json({newCart});
+    let id=req.params.pid
+    let producto =await productsModelo.findById(pid)
+    let tempProd = {id:pid,quantity:1}
+    newCart.products.push(tempProd)
+    let resultado = await cartsModelo.create(newCart)
+    return res.status(400).json({resultado})
+
 });
 
-router.get('/:cid',(req,res)=>{
-    let id=parseInt(req.params.cid)
-    if(isNaN(id)){
-        return res.status(400).json({error:'El id debe ser numerico'})
-    }
-    let cart=getCartById(id)
-    res.setHeader('Content-Type','text/html');        
-    res.status(200).render('realtimeproducts',{cart});
+router.get('/:cid',async (req,res)=>{
+    let id=req.params.cid
+    let cart =await  cartsModelo.findById(id)
+    res.status(200).json({data:cart})
 });
 
 
-router.post('/:cid/product/:pid',(req,res)=>{
-    let cartId=parseInt(req.params.cid)
-    let prodId=parseInt(req.params.pid)
-    let result=addProdToCart(cartId,prodId)
+router.post('/:cid/product/:pid',async(req,res)=>{
+    let cId=req.params.cid
+    let pId=req.params.pid
 
-    if (result=="01"){return res.status(400).json({error:'Cart not found'})}
-    if (result=="10"){return res.status(400).json({error:'Prod not found'})}
-    if (result=="0"){
-        let carrito = getCartById(cartId)
-        return res.status(200).render('realtimeproducts',{carrito});}
+    let carrito = await cartsModelo.findOne({'_id':cId})
+    let alreadyPresent = carrito.products.find(product=> product._id === pId)
+    if (alreadyPresent){
+        await cartsModelo.updateOne({_id:cId, 'products._id':pId},{$inc:{'products.$.quantity':1}}
+    }
+    else{
+        cart.products.push({quantity:1},_id:pId)
+    }
+
 });
 
 

@@ -6,6 +6,7 @@ import {router as productRouter} from './routes/products.router.js'
 import {Server} from 'socket.io'
 import path from 'path';
 import { getCartById } from './routes/cart.router.js';
+import mongoose from 'mongoose';
 
 const PORT=8080;
 
@@ -22,27 +23,19 @@ app.use(express.static(path.join(__dirname,'/public')));
 
 
 
-app.use('/products',productRouter)
+app.use('/api/products',productRouter)
+app.use('/api/carts',cartRouter)
 
-app.get('/realtimeproducts',(rep,res)=>{
-    res.setHeader('Content-Type','text/html');
-    res.status(200).render('realtimeproducts');
-})
-//app.use('/realtimeproducts',cartRouter)
+
 
 const server=app.listen(PORT,()=>{
     console.log(`Server escuchando en puerto ${PORT}`);
 });
 
-const io=new Server(server)
+mongoose.connect('mongodb+srv://gabrielgrezzi:coderhouse@cluster0.rbj8ofh.mongodb.net/?retryWrites=true&w=majority&dbName=ecommerce')
+.then(console.log("Db connected ok"))
+.catch(error=>console.log(error))
 
-io.on('connection',socket=>{
-    console.log(socket.id)
-    socket.on('id',cartId=>{
-        console.log(cartId)
-        let cart = getCartById(cartId)
-        socket.emit('recargaCarrito',cart)
-    })
-});
+
 
 
