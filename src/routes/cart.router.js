@@ -124,12 +124,16 @@ router.post('/:cid/product/:pid',async(req,res)=>{
     let carrito = await cartsModelo.findOne({'_id':cId})
     let alreadyPresent = carrito.products.find(product=> product._id === pId)
     if (alreadyPresent){
-        await cartsModelo.updateOne({_id:cId, 'products._id':pId},{$inc:{'products.$.quantity':1}}
-    }
+        alreadyPresent.quantity ++
+        let response = await cartsModelo.updateOne({_id:cId, 'products._id':pId},{$set:{'products.quantity':alreadyPresent.quantity}})
+    }   
     else{
-        cart.products.push({quantity:1},_id:pId)
+        carrito.products.push({quantity:1,_id:pId})
     }
 
+    await carrito.save();
+    const nuevoCarrito = await cartsModelo.findOne({_id:cId});
+    return res.status(400).json({nuevoCarrito})
 });
 
 
