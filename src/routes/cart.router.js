@@ -132,8 +132,8 @@ router.post('/:cid/product/:pid',async(req,res)=>{
     }
 
     await carrito.save();
-    const nuevoCarrito = await cartsModelo.findOne({_id:cId});
-    return res.status(400).json({nuevoCarrito})
+    carrito = await cartsModelo.findOne({_id:cId});
+    return res.status(400).json({carrito})
 });
 
 
