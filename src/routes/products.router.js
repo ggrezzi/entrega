@@ -11,14 +11,14 @@ import mongoose from "mongoose";
 router.get('/',async (req,res)=>{
     
     let   limite = parseInt(req.query.limit);
+    if(!limite) limite=10
     let    pagina = req.query.page;
     let    sort = req.query.sort;
     let    type =  req.query.query;
     if(!pagina) pagina=1
     let products=[]
-
-    if (limite){
-        products =await  productsModelo.paginate({},{limit:limite,lean:true, page:pagina})
+    if (type) {
+        products =await  productsModelo.paginate({type:type},{limit:limite,lean:true, page:pagina});
         res.setHeader('Content-Type','text/html');
         let { totalPages,
             hasPrevPage,
@@ -34,12 +34,17 @@ router.get('/',async (req,res)=>{
             nextPage,
             limite
         });
-    } 
-    else {products =await  productsModelo.find().lean()
-    console.log(products)
+    }
+    if (sort==="asc") {
+        products =await  productsModelo.aggregate([{$sort:{stock:1}}]);
+        res.setHeader('Content-Type','text/html');
+        res.status(200).render('products',{products});}
+    else if (sort==="desc") {
+        products =await  productsModelo.aggregate([{$sort:{stock:-1}}]);
+        res.setHeader('Content-Type','text/html');
+        res.status(200).render('products',{products});} 
     
-    res.setHeader('Content-Type','text/html');
-    res.status(200).render('products',{products});}
+
 })
 
 
