@@ -10,34 +10,36 @@ import mongoose from "mongoose";
 
 router.get('/',async (req,res)=>{
     
-    let products =await  productsModelo.find().lean()
-    res.setHeader('Content-Type','text/html');
-    res.status(200).render('products',{products});
-    /*
-    let filtros=Object.entries(req.query)
-    let products=getProducts()
-    if (filtros.length>0){
-        if (filtros[0][0]=="limit") {
-            let limit=parseInt(filtros[0][1])
-            if (limit>products.length){res.json(products)}
-            else{
-                let resultados=[]
-                for (let index = 0; index < limit; index++) {
-                    resultados.push(products[index])
-                }
-                res.setHeader('Content-Type','text/html');
-                
-                res.status(200).render('products',{resultados});
-            }
-        }
-        else{res.json("Invalid Parameter")} 
-    }
-    else{
-        console.log(products)
-        res.setHeader('Content-Type','text/html');
-        res.status(200).render('products',{products});
-    }*/
+    let   limite = parseInt(req.query.limit);
+    let    pagina = req.query.page;
+    let    sort = req.query.sort;
+    let    type =  req.query.query;
+    if(!pagina) pagina=1
+    let products=[]
 
+    if (limite){
+        products =await  productsModelo.paginate({},{limit:limite,lean:true, page:pagina})
+        res.setHeader('Content-Type','text/html');
+        let { totalPages,
+            hasPrevPage,
+            hasNextPage,
+            prevPage,
+            nextPage } = products
+        res.status(200).render('products',{
+            products:products.docs,
+            totalPages,
+            hasPrevPage,
+            hasNextPage,
+            prevPage,
+            nextPage,
+            limite
+        });
+    } 
+    else {products =await  productsModelo.find().lean()
+    console.log(products)
+    
+    res.setHeader('Content-Type','text/html');
+    res.status(200).render('products',{products});}
 })
 
 

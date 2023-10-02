@@ -8,6 +8,7 @@ import path from 'path';
 import { getCartById } from './routes/cart.router.js';
 import mongoose from 'mongoose';
 import {messagesModelo} from './dao/models/messages.modelo.js'
+import { productsModelo } from './dao/models/products.modelo.js';
 
 const PORT=8080;
 
@@ -45,6 +46,9 @@ let mensajes=[{
     emisor:'Server',
     mensaje:'Bienvenido al chat del curso Backend...!!!'
 }]
+
+
+
 
 let usuarios=[]
 const io=new Server(server)
