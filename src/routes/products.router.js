@@ -15,10 +15,12 @@ router.get('/',async (req,res)=>{
     let    pagina = req.query.page;
     let    sort = req.query.sort;
     let    type =  req.query.query;
+    if (!sort) sort="asc"
+    if (!type) type="";
     if(!pagina) pagina=1
     let products=[]
-    if (type) {
-        products =await  productsModelo.paginate({type:type},{limit:limite,lean:true, page:pagina});
+    if (type){
+        products =await  productsModelo.paginate({category:type},{limit:limite,lean:true, page:pagina,sort:{price:sort}});
         res.setHeader('Content-Type','text/html');
         let { totalPages,
             hasPrevPage,
@@ -35,16 +37,25 @@ router.get('/',async (req,res)=>{
             limite
         });
     }
-    if (sort==="asc") {
-        products =await  productsModelo.aggregate([{$sort:{stock:1}}]);
+    else{
+        products =await  productsModelo.paginate({},{limit:limite,lean:true, page:pagina,sort:{price:sort}});
         res.setHeader('Content-Type','text/html');
-        res.status(200).render('products',{products});}
-    else if (sort==="desc") {
-        products =await  productsModelo.aggregate([{$sort:{stock:-1}}]);
-        res.setHeader('Content-Type','text/html');
-        res.status(200).render('products',{products});} 
+        let { totalPages,
+            hasPrevPage,
+            hasNextPage,
+            prevPage,
+            nextPage } = products
+        res.status(200).render('products',{
+            products:products.docs,
+            totalPages,
+            hasPrevPage,
+            hasNextPage,
+            prevPage,
+            nextPage,
+            limite
+        }); 
+    }
     
-
 })
 
 

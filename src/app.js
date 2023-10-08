@@ -5,10 +5,9 @@ import {router as cartRouter } from './routes/cart.router.js';
 import {router as productRouter} from './routes/products.router.js'
 import {Server} from 'socket.io'
 import path from 'path';
-import { getCartById } from './routes/cart.router.js';
 import mongoose from 'mongoose';
 import {messagesModelo} from './dao/models/messages.modelo.js'
-import { productsModelo } from './dao/models/products.modelo.js';
+
 
 const PORT=8080;
 
