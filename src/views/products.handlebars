@@ -1,5 +1,5 @@
 <h4>Products Page:</h4>
-<a href="/api/products">Products refresh</a>
+<a href="/products">Products refresh</a>
 <hr>
 
 
@@ -18,35 +18,35 @@
 {{/each}}
 
 {{#if limite}}
-    <a href="/api/products?page=1&limit={{limite}}">Pág.1</a>
+    <a href="/products?page=1&limit={{limite}}">Pág.1</a>
 
     {{#if hasPrevPage}}
-        <a href="/api/products?page={{prevPage}}&limit={{limite}}">Prev.Pág.</a>
+        <a href="/products?page={{prevPage}}&limit={{limite}}">Prev.Pág.</a>
     {{else}}
         <span>Prev.Pág.</span>
     {{/if}}
 
     {{#if hasNextPage}}
-        <a href="/api/products?page={{nextPage}}&limit={{limite}}">Next.Pág.</a>
+        <a href="/products?page={{nextPage}}&limit={{limite}}">Next.Pág.</a>
     {{else}}
         <span>Next.Pág.</span>
     {{/if}}
 
-    <a href="/api/products?page={{totalPages}}&limit={{limite}}">Ult.Pág</a>
+    <a href="/products?page={{totalPages}}&limit={{limite}}">Ult.Pág</a>
 {{else}}
-    <a href="/api/products?page=1">Pág.1</a>
+    <a href="/products?page=1">Pág.1</a>
 
     {{#if hasPrevPage}}
-        <a href="/api/products?page={{prevPage}}">Prev.Pág.</a>
+        <a href="/products?page={{prevPage}}">Prev.Pág.</a>
     {{else}}
         <span>Prev.Pág.</span>
     {{/if}}
 
     {{#if hasNextPage}}
-        <a href="/api/products?page={{nextPage}}">Next.Pág.</a>
+        <a href="/products?page={{nextPage}}">Next.Pág.</a>
     {{else}}
         <span>Next.Pág.</span>
     {{/if}}
 
-    <a href="/api/products?page={{totalPages}}">Ult.Pág</a>
+    <a href="/products?page={{totalPages}}">Ult.Pág</a>
 {{/if}}

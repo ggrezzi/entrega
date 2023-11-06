@@ -1,6 +1,6 @@
 import { Router } from "express";
 export const router=Router()
-import { usersModelo } from "../dao/models/products.modelo.js";
+import { modeloUsuarios } from "../dao/models/usuarios.modelo.js";
 import { parseArgs } from "util";
 import { stringify } from "querystring";
 import mongoose from "mongoose";

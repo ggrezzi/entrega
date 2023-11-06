@@ -1,11 +1,17 @@
 <h2>Registro de usuarios:</h2>
 <hr>
 <form action="/api/sessions/registro" method="post">
-    <input type="text" name="first_name" placeholder="nombre">
-    <input type="text" name="last_name" placeholder="apellido">
+
+    {{#if error}}
+        <div class="error">{{errorDetalle}}</div>
+    {{/if}}
+
+    <input type="text" name="nombre" placeholder="nombre">
+    <input type="text" name="apellido" placeholder="apellido">
     <input type="email" name="email" placeholder="email">
-    <input type="number" name="age" placeholder="edad">
+    <input type="number" name="edad" placeholder="edad">
     <input type="password" name="password" placeholder="password">
+
     <input type="submit" value="Registrar">
 </form>
 <br>
