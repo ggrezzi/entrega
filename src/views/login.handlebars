@@ -10,10 +10,66 @@
         <div class="success">Se ha creado correctamente el usuario {{usuarioCreadoDetalle}}</div>
     {{/if}}
 
-    <input type="email" name="email" placeholder="email">
-    <input type="password" name="password" placeholder="password">
+    <input type="email" name="email" placeholder="email" id="email">
+    <input type="password" name="password" placeholder="password" id="pass">
 
-    <input type="submit" value="Login">
+    <input type="submit" value="Login" id="btnSubmit">
 </form>
 <br>
+<div id="mensaje"></div>
+<a href="/api/sessions/usuario" id="linkUser">Pagina Usuario</a>
+<a href="/api/sessions/github">Inicio con GitHub</a>
+
+<script>
+
+let btnSubmit=document.getElementById('btnSubmit')
+let inputEmail=document.getElementById('email')
+let inputPass=document.getElementById('pass')
+let divMensaje=document.getElementById('mensaje')
+let linkUser = document.getElementById('linkUser')
+
+btnSubmit.addEventListener("click",async (evt)=>{
+    evt.preventDefault()
+    document.getElementById('mensaje').innerHTML=""
+    if (inputEmail.value.trim().length===0||inputPass.value.trim().length===0){
+        document.getElementById('mensaje').innerHTML="Datos invalidos"
+        return
+    }
+    let body={
+        email:inputEmail.value,
+        password:inputPass.value
+    }
+    let result=await fetch('/api/sessions/login',{
+        method:'post',
+        headers:{
+            'Content-Type':'application/json'
+        },
+        body:JSON.stringify(body)
+    })
+    if (result.status===200){
+        let datos = await result.json()
+        localStorage.setItem('entregaToken',datos.token)
+        divMensaje.innerHTML=`Bienvenido ${datos.usuario.nombre}`
+    }else {
+        divMensaje.innerHTML="Error de login"
+    }
+})
+linkUser.addEventListener("click",async(evt)=>{
+    evt.preventDefault();
+    alert("test")
+    console.log("test")
+    let resultado = await fetch('/api/sessions/usuario',{
+        methid:'get',
+        headers:{
+            'Content-Type':'application/json',
+            'Authorization':'Bearer '+localStorage.getItem('entregaToken')
+        },
+    })
+    let datos=await resultado.json()
+    console.log(datos)
+
+})
+</script>
+
+
 {{>menu}}

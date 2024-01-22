@@ -5,10 +5,12 @@ import {engine} from 'express-handlebars';
 import mongoose from 'mongoose';
 import session from 'express-session'
 import ConnectMongo from 'connect-mongo'
-
+import { config } from './config/config.js';
 import { router as vistasRouter } from './routes/vistas.router.js';
 import { router as sessionsRouter } from './routes/sessions.router.js';
 import {router as productRouter} from './routes/products.router.js'
+import passport from 'passport'
+import {inicializaPassport} from './config/passport.config.js'
 
 const PORT=3000;
 
@@ -28,12 +30,15 @@ app.use(session({
     secret:'claveSecreta',
     resave:true, saveUninitialized:true,
     store: ConnectMongo.create({
-        mongoUrl:'mongodb+srv://gabrielgrezzi:coderhouse@cluster0.rbj8ofh.mongodb.net/?retryWrites=true&w=majority&dbName=ecommerce',
-        ttl: 3600
+        mongoUrl:config.MONGO_URL,
+        ttl: config.PORT
     }),
-    // cookie:{maxAge:1000}
+    cookie:{maxAge:1000}
 }))
 
+inicializaPassport()
+app.use(passport.initialize())
+app.use(passport.session())
 app.use('/', vistasRouter)
 app.use('/api/sessions', sessionsRouter)
 

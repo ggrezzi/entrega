@@ -6,9 +6,13 @@ export const validarProducto=(prod)=>{
 
     return `Error al cargar el producto.
 Argumentos esperados:
-    - name: de tipo String - se recibió ${name}
+- Title: de tipo String - se recibió ${title}
+- Description: de tipo String - se recibió ${description}
+- price: de tipo Int - se recibió ${price}
+- code: de tipo String - se recibió ${code}
+
 Argumentos opcionales: 
-    - team, publisher, powers, alias - se recibieron ${JSON.stringify(otros)}
+    - thumbnail,  - se recibieron ${JSON.stringify(otros)}
     
 Fecha: ${new Date().toUTCString()}
 Usuario: ${os.userInfo().username}

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 export const router=Router()
 
+
 const auth=(req, res, next)=>{
     if(req.session.usuario){
         next()
@@ -46,7 +47,6 @@ router.get('/registro',auth2,(req,res)=>{
 })
 
 router.get('/login',auth2,(req,res)=>{
-
     let error=false
     let errorDetalle=''
     if(req.query.error){
